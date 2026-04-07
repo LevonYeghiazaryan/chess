@@ -224,6 +224,18 @@ Round 1 games have no history → filled with 0.5 (neutral) for prev_result, 0 f
 
 ---
 
+## Trial 10: Misclassification by Round
+
+Model accuracy degrades monotonically from **84% in Round 1 to 58% in Round 11**. Swiss pairing matches similar-scoring players in later rounds, making outcomes near-random from pre-game features. The model confuses white_win ↔ white_loss symmetrically in late rounds.
+
+---
+
+## Trial 11: Threshold Analysis
+
+Swept per-class probability thresholds (0.05–0.95). Win/loss thresholds are near-optimal at default argmax. Lowering the draw threshold to ~0.10–0.15 improves draw recall but precision stays poor (~19%). Draw probabilities are too poorly separated for thresholding to fix. See `threshold_analysis.py` and `plots/threshold_*.png`.
+
+---
+
 ## Final Winners
 
 | Goal | Model | Test Acc | Test F1m | Draw F1 |
@@ -291,4 +303,3 @@ Top features by mean |SHAP| value for the best balanced model (Ratings+Stats+Clk
 7. **Previous game result** — did the player just win, lose, or draw? A loss in the previous round may cause tilt (worse performance) or motivation (stronger play). A win streak builds confidence. This sequential context is currently ignored.
 8. **Tournament standing & prize motivation** — a player fighting for a money position (e.g., 7.5/9 going into round 10, needing wins to finish top 3) plays more aggressively than someone already out of contention at 4/9. Features: distance to prize positions, mathematical elimination status, points needed to reach top N.
 9. **Ensembling** — combine multiple model types (LightGBM, logistic regression, Elo baseline) into a blended prediction. Each model captures different patterns: Elo handles the rating-based prior, LightGBM captures non-linear feature interactions, logistic regression provides calibrated probabilities. A weighted average or stacking approach could outperform any single model, especially for the draw class where different models make different errors.
-# chess
